@@ -18,7 +18,7 @@ export default {
 		const path = url.pathname;
 
 		// Define the allowed paths
-		const allowedPaths = ['/'];
+		const allowedPaths = ['/demo/cloudflare-worker-placeholder'];
 
 		// Check if the path is allowed
 		if (!allowedPaths.includes(path)) {
