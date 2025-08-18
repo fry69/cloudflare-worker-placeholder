@@ -73,7 +73,7 @@ describe('Placeholder Page Worker', () => {
 	});
 
 	it('responds to JSON requests', async () => {
-		const request = new IncomingRequest(`${testURL}.json`, { cf: mockCf });
+		const request = new IncomingRequest(`${testURL}.json`, { headers: { 'CF-Connecting-IP': '1.2.3.4' }, cf: mockCf });
 		const ctx = createExecutionContext();
 
 		const response = await worker.fetch(request, env, ctx);
@@ -86,5 +86,8 @@ describe('Placeholder Page Worker', () => {
 
 		// Check if JSON response matches mocked object
 		expect(json).toMatchObject(mockCf);
+
+		// Check if the IP address gets returned
+		expect(json).toMatchObject({ clientIp: '1.2.3.4' });
 	});
 });

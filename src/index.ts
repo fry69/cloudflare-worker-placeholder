@@ -14,6 +14,7 @@ export default {
 		const url = new URL(request.url);
 		const domain = url.hostname;
 		const path = url.pathname;
+		const ip = request.headers.get('CF-Connecting-IP');
 
 		// Define the allowed paths
 		const allowedPaths = ['/demo/cloudflare-worker-placeholder', '/demo/cloudflare-worker-placeholder.json'];
@@ -25,7 +26,9 @@ export default {
 		}
 
 		if (path === '/demo/cloudflare-worker-placeholder.json') {
-			return new Response(JSON.stringify(cf), { headers: { 'content-type': 'application/json; charset=utf-8' } });
+			return new Response(JSON.stringify({ clientIp: ip, ...cf }), {
+				headers: { 'content-type': 'application/json; charset=utf-8' },
+			});
 		}
 
 		const html = `
