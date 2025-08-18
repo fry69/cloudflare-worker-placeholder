@@ -1,6 +1,8 @@
-import { env, createExecutionContext, waitOnExecutionContext } from 'cloudflare:test';
-import { describe, it, expect, vi } from 'vitest';
+import { createExecutionContext, env, waitOnExecutionContext } from 'cloudflare:test';
+import { describe, expect, it } from 'vitest';
 import worker from '../src/index';
+
+const testURL = `https://fry69.dev/demo/cloudflare-worker-placeholder`;
 
 // Mock IncomingRequestCfProperties
 interface MockIncomingRequestCfProperties {
@@ -15,7 +17,10 @@ interface MockIncomingRequestCfProperties {
 }
 
 // Extend the Request type to include cf property
-const IncomingRequest = Request as new (input: RequestInfo, init?: RequestInit & { cf?: MockIncomingRequestCfProperties }) => Request;
+const IncomingRequest = Request as new (
+	input: RequestInfo,
+	init?: RequestInit & { cf?: MockIncomingRequestCfProperties },
+) => Request;
 
 describe('Placeholder Page Worker', () => {
 	it('responds with correct HTML content', async () => {
@@ -30,7 +35,7 @@ describe('Placeholder Page Worker', () => {
 			colo: 'EWR',
 		};
 
-		const request = new IncomingRequest('http://example.com', { cf: mockCf });
+		const request = new IncomingRequest(testURL, { cf: mockCf });
 		const ctx = createExecutionContext();
 
 		const response = await worker.fetch(request, env, ctx);
@@ -42,7 +47,7 @@ describe('Placeholder Page Worker', () => {
 		expect(response.headers.get('content-type')).toBe('text/html;charset=UTF-8');
 
 		// Check if the HTML contains expected content
-		expect(html).toContain('<title>Welcome to example.com</title>');
+		expect(html).toContain('<title>Welcome to fry69.dev</title>');
 		expect(html).toContain("You're visiting from New York, US");
 		expect(html).toContain('You are using HTTP/2');
 		expect(html).toContain('ASN: 13335 (Acme)');
@@ -51,7 +56,7 @@ describe('Placeholder Page Worker', () => {
 	});
 
 	it('handles missing cf properties gracefully', async () => {
-		const request = new IncomingRequest('http://example.com', { cf: {} });
+		const request = new IncomingRequest(testURL, { cf: {} });
 		const ctx = createExecutionContext();
 
 		const response = await worker.fetch(request, env, ctx);

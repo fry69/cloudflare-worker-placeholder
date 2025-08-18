@@ -1,9 +1,7 @@
-interface Env {
-	// Define any environment variables here
-}
+// index.ts
 
 export default {
-	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
+	async fetch(request: Request, _env: Env, _ctx: ExecutionContext): Promise<Response> {
 		const { cf } = request;
 		if (!cf) {
 			return new Response('Nothing to see here', {
