@@ -66,13 +66,13 @@ The worker supports returning the full `request.cf` object plus the client IP ad
 Examples:
 
 ```shell
-curl -H 'accept: application/json' https://fry69.dev/demo/cloudflare-worker-placeholder | jq
+curl -sH 'accept: application/json' https://fry69.dev/demo/cloudflare-worker-placeholder | jq
 ```
 
 or
 
 ```shell
-curl https://fry69.dev/demo/cloudflare-worker-placeholder.json | jq
+curl -s https://fry69.dev/demo/cloudflare-worker-placeholder.json | jq
 ```
 
 ## Customization
