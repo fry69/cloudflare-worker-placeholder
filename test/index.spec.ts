@@ -72,8 +72,30 @@ describe('Placeholder Page Worker', () => {
 		expect(html).toContain("const map = L.map('map').setView([undefined, undefined], 10);");
 	});
 
-	it('responds to JSON requests', async () => {
+	it('responds to JSON requests ending on .json', async () => {
 		const request = new IncomingRequest(`${testURL}.json`, { headers: { 'CF-Connecting-IP': '1.2.3.4' }, cf: mockCf });
+		const ctx = createExecutionContext();
+
+		const response = await worker.fetch(request, env, ctx);
+		await waitOnExecutionContext(ctx);
+
+		// Check JSON content type
+		expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
+
+		const json = await response.json();
+
+		// Check if JSON response matches mocked object
+		expect(json).toMatchObject(mockCf);
+
+		// Check if the IP address gets returned
+		expect(json).toMatchObject({ clientIp: '1.2.3.4' });
+	});
+
+	it('responds to JSON requests via accept header', async () => {
+		const request = new IncomingRequest(`${testURL}`, {
+			headers: { 'CF-Connecting-IP': '1.2.3.4', accept: 'application/json' },
+			cf: mockCf,
+		});
 		const ctx = createExecutionContext();
 
 		const response = await worker.fetch(request, env, ctx);

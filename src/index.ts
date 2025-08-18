@@ -15,6 +15,7 @@ export default {
 		const domain = url.hostname;
 		const path = url.pathname;
 		const ip = request.headers.get('CF-Connecting-IP');
+		const accept = request.headers.get(`Accept`);
 
 		// Define the allowed paths
 		const allowedPaths = ['/demo/cloudflare-worker-placeholder', '/demo/cloudflare-worker-placeholder.json'];
@@ -25,7 +26,7 @@ export default {
 			return new Response('Not Found\n', { status: 404 });
 		}
 
-		if (path === '/demo/cloudflare-worker-placeholder.json') {
+		if (path === '/demo/cloudflare-worker-placeholder.json' || accept?.includes('application/json')) {
 			return new Response(JSON.stringify({ clientIp: ip, ...cf }), {
 				headers: { 'content-type': 'application/json; charset=utf-8' },
 			});

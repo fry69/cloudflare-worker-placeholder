@@ -9,10 +9,11 @@ This project is a customizable Cloudflare Worker that generates a simple placeho
 - Shows information such as HTTP protocol, ASN, and Cloudflare colo
 - Responsive design with a modern, gradient background
 - Frosted glass effect for the main content container
+- JSON response returning the full `request.cf` object + `clientIp`
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) (version 18 or later)
+- [Node.js](https://nodejs.org/) (version 20 or later)
 - [Wrangler CLI](https://developers.cloudflare.com/workers/cli-wrangler/install-update) (version 3 or later)
 - A Cloudflare account with Workers enabled
 
@@ -26,7 +27,7 @@ This project is a customizable Cloudflare Worker that generates a simple placeho
 
 2. Install dependencies:
    ```
-   npm install
+   pnpm install
    ```
 
 3. Configure your Cloudflare account in Wrangler:
@@ -34,27 +35,45 @@ This project is a customizable Cloudflare Worker that generates a simple placeho
    wrangler login
    ```
 
-4. Optionally update the `wrangler.toml` file with your custom domains:
-   ```
-   routes = [
-     { pattern = "example.com", custom_domain = true },
-     { pattern = "www.example.com", custom_domain = true }
-   ]
+4. Optionally update the `wrangler.jsonc` file with your custom domains:
+   ```json
+	"routes": [
+		{
+			"pattern": "example.com",
+			"custom_domain": true
+		}
+	]
    ```
 
 ## Usage
 
 1. Develop and test locally:
    ```
-   npm run dev
+   pnpm run dev
    ```
 
 2. Deploy to Cloudflare Workers:
    ```
-   npm run deploy
+   pnpm run deploy
    ```
 
 3. Add a route in your Cloudflare dashboard to direct traffic to this worker or add custom domains in `wrangler.toml` as described above.
+
+## JSON response
+
+The worker supports returning the full `request.cf` object plus the client IP address in the additional `clientIp` proptery. Add `.json` at the end of the URL, or request `application/json` as the `accept` in the request.
+
+Examples:
+
+```shell
+curl -H 'accept: application/json' https://fry69.dev/demo/cloudflare-worker-placeholder | jq
+```
+
+or
+
+```shell
+curl https://fry69.dev/demo/cloudflare-worker-placeholder.json | jq
+```
 
 ## Customization
 
@@ -69,7 +88,7 @@ You can customize the appearance and content of the placeholder page by modifyin
 This project includes unit tests using Vitest. To run the tests:
 
 ```
-npm test
+pnpm test
 ```
 
 ## Contributing
