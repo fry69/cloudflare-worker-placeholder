@@ -22,19 +22,19 @@ const IncomingRequest = Request as new (
 	init?: RequestInit & { cf?: MockIncomingRequestCfProperties },
 ) => Request;
 
+const mockCf = {
+	city: 'New York',
+	country: 'US',
+	latitude: '40.7128',
+	longitude: '-74.0060',
+	httpProtocol: 'HTTP/2',
+	asn: '13335',
+	asOrganization: 'Acme',
+	colo: 'EWR',
+};
+
 describe('Placeholder Page Worker', () => {
 	it('responds with correct HTML content', async () => {
-		const mockCf = {
-			city: 'New York',
-			country: 'US',
-			latitude: '40.7128',
-			longitude: '-74.0060',
-			httpProtocol: 'HTTP/2',
-			asn: '13335',
-			asOrganization: 'Acme',
-			colo: 'EWR',
-		};
-
 		const request = new IncomingRequest(testURL, { cf: mockCf });
 		const ctx = createExecutionContext();
 
@@ -70,5 +70,21 @@ describe('Placeholder Page Worker', () => {
 		expect(html).toContain('ASN: undefined (undefined)');
 		expect(html).toContain('Colo: undefined');
 		expect(html).toContain("const map = L.map('map').setView([undefined, undefined], 10);");
+	});
+
+	it('responds to JSON requests', async () => {
+		const request = new IncomingRequest(`${testURL}.json`, { cf: mockCf });
+		const ctx = createExecutionContext();
+
+		const response = await worker.fetch(request, env, ctx);
+		await waitOnExecutionContext(ctx);
+
+		// Check JSON content type
+		expect(response.headers.get('content-type')).toBe('application/json; charset=utf-8');
+
+		const json = await response.json();
+
+		// Check if JSON response matches mocked object
+		expect(json).toMatchObject(mockCf);
 	});
 });

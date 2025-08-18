@@ -16,12 +16,16 @@ export default {
 		const path = url.pathname;
 
 		// Define the allowed paths
-		const allowedPaths = ['/demo/cloudflare-worker-placeholder'];
+		const allowedPaths = ['/demo/cloudflare-worker-placeholder', '/demo/cloudflare-worker-placeholder.json'];
 
 		// Check if the path is allowed
 		if (!allowedPaths.includes(path)) {
 			// Serve a 404 response
-			return new Response('Not Found', { status: 404 });
+			return new Response('Not Found\n', { status: 404 });
+		}
+
+		if (path === '/demo/cloudflare-worker-placeholder.json') {
+			return new Response(JSON.stringify(cf), { headers: { 'content-type': 'application/json; charset=utf-8' } });
 		}
 
 		const html = `
